@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <h1>WebSocket Demo</h1>
+    <div>
+        <input type="text" id="txt"/>
+        <input type="button" id="btn" value="Submit" onclick="sendMsg();"/>
+        <input type="button" id="close" value="Closing Connection" onclick="closeConn();"/>
+    </div>
+    <div id="content"></div>
+ 
+<script type="text/javascript">
+    var socket = new WebSocket("ws://127.0.0.1:8003");
+ 
+    socket.onopen = function () {
+        /* beginning of the connection */
+        var newTag = document.createElement('div');
+        newTag.innerHTML = "[State] Connected";
+        document.getElementById('content').appendChild(newTag);
+    };
+ 
+    socket.onmessage = function (event) {
+        /* message from the client to the server */
+        var response = event.data;
+        var newTag = document.createElement('div');
+        newTag.innerHTML = "[Message] " + response;
+        document.getElementById('content').appendChild(newTag);
+    };
+ 
+    socket.onclose = function (event) {
+        /* disconnecting */
+        var newTag = document.createElement('div');
+        newTag.innerHTML = "[State] Dis-connected";
+        document.getElementById('content').appendChild(newTag);
+    };
+ 
+    function sendMsg() {
+        var txt = document.getElementById('txt');
+        socket.send(txt.value);
+        txt.value = "";
+    }
+    function closeConn() {
+        socket.send("_state_closing");
+        socket.close();
+        var newTag = document.createElement('div');
+        newTag.innerHTML = "[State]: Connection Closed";
+        document.getElementById('content').appendChild(newTag);
+    }
+ 
+</script>
+</body>
+</html>
